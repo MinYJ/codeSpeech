@@ -1,0 +1,35 @@
+#1
+
+(1)
+boxModel은 일명 css Layout box라는 시스템안에 들어가는 모든 element들이 지켜야하는 규격이다
+
+MARGIN: 마진은 투명하지만 실체를 확보하고 있다
+BORDER: 외곽선을 칠한 경계면, 끝없는 크기를 가질 수 있다, width를 200, 300 줄 수 있다
+             즉, width도 content처럼 쓸 수 있다
+PADDING: border로 부터 contents를 띄어주는역할을 한다.
+CONTENTS
+
+하나의 elements는 4단계의 박스를 가지고 있다
+
+(2) 
+BOX-SIZING은 width, height을 계산할때 적용된다
+MS는 BORDER-BOX를 기준으로 width를 계산했다
+CSS표준에서는 CONTENTS를 기준으로 했다
+
+BOX-SIZING은 BORDER-BOX, PADDING-BOX, CONTENTS-BOX 중에 어떤 것을 사이즈로 삼을까
+설정할때 사용된다
+
+(3) 
+BOX-SHADOW는 그림자를 주려고 만들었다
+원래 상자가 있으면 그림자도 상자이다
+그림자가 원래 상자로부터 떨어져 있는지 OFFSET을 통해서 LEFT, TOP을 준다
+
+BOX-SHADOW에 blur를 없애면 정확하게 border와 동일하다 
+BOX-SHADOW는 border-box 바깥쪽에 그려진다
+BOX-SHADOW INSET은 border안쪽에도 그림자를 줄 수 있다
+
+BOX-SHADOW는 무한히 만들 수 있다
+BOX-SHADOW는 border-radious가 따라온다
+
+(4)
+OUTLINE는 BOX-SHADOW위에 그릴 수 있는 속성이다

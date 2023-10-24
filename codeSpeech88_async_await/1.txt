@@ -1,0 +1,141 @@
+#0 Sync
+Async, Sync를 알아보기전에 이들의 기반 기술을 알아보겠다
+Async, Sync는 서로 반대이다
+Async는 Sync가 아닌것이다
+
+
+(1)
+Sync는 Sync flow control에서 왔다
+Sync Flow: 메모리에 적재된 명령이 순차적으로 실행됨
+명령을 적재해서 명령이 CPU에서 실행되는 흐름을 말한다
+
+우리가 쓰고있는 머신은 폰노이만 머신이다
+폰노이만 머신은 먼저 실행해야할 프로그램들을 메모리에 모두 적재 한다.
+그 이후, 메모리에서 순차적으로 쫙 소비해버린다
+메모리가 소비되는 순간 우리는 관여할 수 없다
+
+그러므로, Sync Flow는 한 번 실행되면 개발자가 관여할 수 없다
+처음부터 관여할 수 없기에 Sync Flow을 이용해서 중간에 다른위치의 명령을 실행하 수 있도록 미리 작성한다
+Sync Flow는 go to가 원조이다
+
+(2)
+sub flow: 별도의 Sync flow
+별도의 Sync flow를 만들어 두면 이것을 재활용 할 수 있다
+
+(3) 
+subFlow가 아닌것은?
+Promise는 subFlow가 될 수없다 왜냐하면, 한 번 사용되고 나면 사라져서 다시 만들어야 한다
+
+
+#1 Blocking
+(1)
+Sync Flow는 무조건 Blocking을 일으킨다
+Sync Flow사이에 CPU가 먹통이되는 현상을 말한다
+왜냐하면 노이만 머신은 명령어를 적재하고 해소하는 사이에 아무짓도 못하고 해소만 해야하기에
+이 사이에 다른것을 할 수 가 없다.
+
+하나의 쓰레드에서 Sync Flow가 일어나면 무조건 blocking이 일어난다.
+
+ 
+(2)
+Blocking을 없앨수 없기에 어떻게 줄일지 노력해야한다.
+제일 쉬운방법은 Sync Flow를 짧게 만드는것이다.
+하지만 Sync Flow를 짧게 만드는것은 바람직하지만 불가능하다.
+
+흔히 많이쓰는 방법은 다른 쓰레드에 SyncFlow를 넘기는 방법이다
+쓰레드는 CPU가 실제로 작업을 하는 단위이다
+
+다른쓰레드의 작업이 완료되면 원래 쓰레드에 결과를 넘겨줘야하는데
+원래 쓰레드의 작업이 끝나버려 돌려줄 방법이없다
+
+이것이 문제이다.
+어떻게 원래쓰레드에게 다른 쓰레드의 작업결과를 보내줄것인가
+이것이 복잡한 동시성 문제이다
+
+(3)
+Non Blocking이란 SyncFlow가 납득할 만한 시간 내에 종료되는것을 말한다
+Blocking현상이 내가 마음에 들만큼 짧은가 긴가??
+
+프론트엔드 기준 16ms안에 들어오면 NonBlocking이다.
+16ms가 되면 초당 60프레임으로 렌더링을 할 수 있다
+
+모니터 144Hz에서 원할하게 작동하기 위해서는 우리의 알고리즘이 한프레임당 8ms안으로 들어와야한다
+
+
+#2 Async
+(1)
+Sync - 서브루틴이 즉시 값을 반환
+Async - 서브루틴이 다른 수단으로 값을 반환
+
+다른수단이란??
+Promise, callback function, iterations, 
+
+(2)
+Async의 단점
+호출결과가 즉시 반환되지 않으므로 현재의 Syncflow가 종료된다
+Syncflow가 종료된다는 이야기는 그 안에 선언되 있던 지역변수가 사라지는것을 말한다
+
+Sync, Async는 블록과 완전 관련이 없다
+Async는 그저 함수의 반환값일뿐 직접반환하지않고 다른수단으로 반환하게 되면 Async이기 때문에
+Async-block, Async-nonBlock로 가능하다
+
+Sync는 함수만 직접 반환하면 되기때문에, Sync-blocking, Sync-nonblock로 있다
+Sync상태의 모든것을 들고오기위한 부가장치가 필요하다
+
+(3) Sync의 장점 + Async의 장점
+sync로직으로 Async를 사용할 수 있게 만듬
+그러나 Syncflow에 있는 지역변수등이 사라져 이전 Syncflow의 상태를 기억해줄 장치가 필요
+
+대신에 Sync를 길게 만들면 blocking이 일어난다 
+
+현재의 Sync로직을 가지고 있는 모든상태 잘 저장하고 있다가
+Async이후에도 그 상태를 복원해서 사용할 수 있는 그것을 Continuation이라 부른다
+
+현대의 언어는 Syncflow처럼 짜여져 있지만, 내부는 AsyncFlow가 반복되고 있는 문법을 제공하고 있다
+이것이 가능한 이유가 Async상태가 나올때마다 Continuation이 이전 Sync의 상태를 가지고 있다
+이를 활용하는 프로그래밍스타일을 CPS(Continuation Passing Style)이라고 부른다
+Generator, Async, Asynchrous iterators
+
+#3 Non Blocking For
+nonBlocking으로 만들기 위해서 max값을 설정하고 한 번 프레임에 얼마만큼 load를 할거다라는 두 번째인자 로드를 만들고
+실제 실행할 block를 받는 세 번째인자 block를 만들었다
+
+한 번 프레임을 동작할때마다 load만큼 전진한다
+curr값이 0이되던지,  i < max보다 작은상태가 유지되던지하기때문에
+curr보다 더 많이 한 번에 loop를 돌지는 않는다.
+
+
+#4 Generator
+(1)
+recursion이란 이미 나와있는 구조를 순회하는것을 말한다
+
+일반적으로 loop에는 두 가지 종류가 있다
+첫 번째는 iteration loop가 있다
+iteration loop는 구조가 확정적이여서 순회하는 경우를 말한다
+recursion은 구조가 확정적이라기 보다는 저것이 어딘가로 이동하면, 그 다음으로 이동할 포인터가 있다 
+이미 만들어져있는것을 순회하는것을 recursion이라고 한다
+
+두 번째는 Corecursion이 있다
+이미 만들어져있는 구조를 순회하는것이 아니라 작은 힌트로 부터 구조를 만들어 낸다.
+다른언어에서 range라는 함수가 있다고 생각해보자 range(1, 10)이라고 하면
+1부터 10까지 iteration만들어낸다고 생각해보자
+예시) range(1, 10)
+
+Generator의 목적도 recursion아니라 coRecursion이다
+
+(2)
+Syncflow에서 while문이 나온다면?
+무한루프에 빠져서 blocking이 일어나야한다.
+이것은 yield를 통해서 while문을 중간에 탈출할 수 있다
+
+내부적으로는 CPS를 통해서 내부적으로 Async함수가 continuation을 패싱하는 형태로 되어있다
+
+(3)
+Generator의 장점
+비동기 스타일의 callback loop를 쓰는것보다 훨씬 더 동기적인 코드를 통해서 작성하기 편하고 
+실행부분과 loop부분의 로직을 분리할 수 있다
+
+실행하는쪽은 next()를 통해서 실행하고 이쪽은 loop만을 신경써서 분리할 수 있다
+
+
+#5 Promise

@@ -48,7 +48,7 @@ const recursive = (iter, isObject,accu, prev) => { // object를 인자로 던지
     const v = isObject ? value[1] : value;
     switch(true) {
       case Array.isArray(v):
-        return recursive(v[Symbol.iterator](), false, null, {target:iter, isObject, accumulation: accu, prev: prev});
+        return recursive(v[Symbol.iterator](), false, null, {target:iter, isObject, k:isObject ? value[0] : "", accu, prev});
       case v && typeof v == "object":
         return recursive(objEntries(v), true, null, {target: iter, isObject, accu, k:value[0], prev});
       default:

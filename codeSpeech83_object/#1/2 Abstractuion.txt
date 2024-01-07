@@ -1,0 +1,18 @@
+(1) Abstraction
+
+(1.1)
+Data Ab -> 메서드, 함수가 없어 동작이 없다
+- Modeling: 특정목표에 대해서 기억해야할것만을 말한다.
+- Categorization:  
+- Grouping:
+
+(1.2)
+Procedural Ab
+
+(1.3)
+OOP Ab
+추상화는 크게 Data, Procedure로 나뉘어져있다
+
+(2)
+Procedure의 의미
+어떠한 함수에게 데이터를 넘기고 그 데이터의 처리를 맡긴다

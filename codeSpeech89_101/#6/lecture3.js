@@ -17,6 +17,7 @@ const parse = (str, acc, stack)=>{
       console.log(`prev: `, prev);
       console.log(`acc: `, acc);
       prev.push(acc);
+      console.log('푸쉬후: ', prev);
       return parse(v.substr(1), prev, stack);
     default:
       const value = rNum.exec(v);
@@ -31,15 +32,26 @@ const parse = (str, acc, stack)=>{
 }
 
 // parse("[1,2,3,[1,2,[3,4]]]", [], []);
-parse("[1,2]", [], []);
+// [1,[2,[3]]]
+const a = parse("[1,[2,[3]]]", [], []);
+// console.log(a);
 
-// const v = "1,2]"
+
+// const v = "3]]]";
 // const value = rNum.exec(v);
+// console.log(value);
+// console.log(v.substr(value[0].length));
 // console.log(value[0]);
+// console.log(value[0].length);
 // console.log(value[1]);
 
+// const v = "[1,[2]]";
+// console.log(v[0]);
+// console.log(v.substring(1));
 
-
+// const array = [1];
+// array.push([]);
+// console.log(array);
 //3. -> 배열: 1, 234, 3]
 /*
 ** 시작부터 공백이 있을 수 있다
